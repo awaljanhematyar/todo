@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Tasks</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <div class="card">
+        <div class="card-header">
+          <div class="header-icon">✓</div>
+          <h1>My tasks</h1>
+          <span class="badge" id="badge">0 tasks</span>
+        </div>
+
+        <div class="card-body">
+          <div class="input-row">
+            <input
+              type="text"
+              id="todo-input"
+              placeholder="Add a new task..." />
+            <button id="add-btn">+ Add</button>
+          </div>
+
+          <p class="section-label">Today</p>
+          <ul id="todo-list"></ul>
+
+          <div class="divider"></div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-num" id="stat-total">0</div>
+              <div class="stat-lbl">Total</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num" id="stat-done">0</div>
+              <div class="stat-lbl">Done</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num" id="stat-left">0</div>
+              <div class="stat-lbl">Remaining</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
