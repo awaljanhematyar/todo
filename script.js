@@ -1,83 +1,69 @@
-//select DOM element
+// Browser-local task list with resilient storage and immediate completion feedback.
 const input = document.getElementById("todo-input");
 const addbtn = document.getElementById("add-btn");
 const list = document.getElementById("todo-list");
-
-// try to load saved todos from localstorage (if any)
-const saved = localStorage.getItem("todos");
-const todos = saved ? JSON.parse(saved) : [];
+let todos = [];
+try {
+  const saved = JSON.parse(localStorage.getItem("todos") || "[]");
+  if (Array.isArray(saved)) todos = saved
+    .filter((todo) => todo && typeof todo.text === "string" && todo.text.trim())
+    .map((todo) => ({ text: todo.text.trim(), completed: Boolean(todo.completed) }));
+} catch { /* Start with an empty list when stored JSON is invalid. */ }
 
 function saveTodos() {
-  // save current array to localStorage
-  localStorage.setItem("todos", JSON.stringify(todos));
+  try { localStorage.setItem("todos", JSON.stringify(todos)); }
+  catch { /* The current session still works if browser storage is unavailable. */ }
 }
-
-// create a dom node for a todo object  and append it to  the list
 function createTodonode(todo, index) {
   const li = document.createElement("li");
-
-  //cheacbox  to toggle completion
   const checkbox = document.createElement("input");
-
-  checkbox.checked = !!todo.completed;
-  checkbox.type ="checkbox";
-  checkbox.addEventListener("change", () => {
-    todo.completed = checkbox.checked;
-
-    //TODO: visual feedback: strike -throgh when completed
-    saveTodos();
-  });
-
-  // text of the todo
+  checkbox.type = "checkbox";
+  checkbox.checked = todo.completed;
+  checkbox.setAttribute("aria-label", "Complete " + todo.text);
   const textspan = document.createElement("span");
   textspan.textContent = todo.text;
   textspan.style.margin = "0 8px";
-  if (todo.completed){
-    textspan.style.textDecoration = "line-through";
-}
-    //add double -click event listener to edit todo
-    textspan.addEventListener("dblclick", () => {
-      const newText = prompt("Edit todo", todo.text);
-      if (newText !== null) {
-        todo.text = newText.trim();
-        textspan.textContent = todo.text;
-        saveTodos();
-      }
-    
-    });
-    // delete todo btn
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "Delete";
-    delBtn.addEventListener("click", () => {
-      todos.splice(index, 1);
-      render();
+  textspan.style.textDecoration = todo.completed ? "line-through" : "none";
+  checkbox.addEventListener("change", () => {
+    todo.completed = checkbox.checked;
+    textspan.style.textDecoration = todo.completed ? "line-through" : "none";
+    saveTodos();
+  });
+  textspan.addEventListener("dblclick", () => {
+    const value = prompt("Edit todo", todo.text);
+    if (value !== null && value.trim()) {
+      todo.text = value.trim();
+      textspan.textContent = todo.text;
+      checkbox.setAttribute("aria-label", "Complete " + todo.text);
       saveTodos();
-    });
-    li.appendChild(checkbox);
-    li.appendChild(textspan);
-    li.appendChild(delBtn);
-    return li
-  
+    }
+  });
+  const delBtn = document.createElement("button");
+  delBtn.textContent = "Delete";
+  delBtn.addEventListener("click", () => {
+    todos.splice(index, 1);
+    render();
+    saveTodos();
+  });
+  li.appendChild(checkbox);
+  li.appendChild(textspan);
+  li.appendChild(delBtn);
+  return li;
 }
-//render the whole todo list from todo arrays
 function render() {
   list.innerHTML = "";
-  // recreate each item
-  todos.forEach((todo, index) => {
-    const node = createTodonode(todo, index);
-    list.appendChild(node);
-  });
+  todos.forEach((todo, index) => list.appendChild(createTodonode(todo, index)));
 }
-function addTodo(){
+function addTodo() {
   const text = input.value.trim();
-  if (!text) {
-    return
-  }
-  //push a new todo object
-  todos.push({text,completed:false});
+  if (!text) return;
+  todos.push({ text, completed: false });
   input.value = "";
   render();
   saveTodos();
 }
 addbtn.addEventListener("click", addTodo);
+input.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") addTodo();
+});
 render();
