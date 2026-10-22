@@ -4,6 +4,8 @@ Vanilla JavaScript task-list practice with add, edit, delete, completion toggles
 
 Part of my JavaScript practice work. Explore my complete projects on [GitHub](https://github.com/awaljanhematyar) or my [developer portfolio](https://hematyar-professional-portfolio.vercel.app/).
 
+[Live demo](https://awaljanhematyar.github.io/todo/)
+
 ## Features
 
 - Add tasks with the button or Enter key.
@@ -11,6 +13,7 @@ Part of my JavaScript practice work. Explore my complete projects on [GitHub](ht
 - Double-click task text to edit it without accepting blank edits.
 - Delete tasks and preserve records between visits.
 - Recover from malformed or unavailable browser storage.
+- Keep task, completed and remaining counts synchronized after changes.
 
 ## Run locally
 

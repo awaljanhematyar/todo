@@ -11,8 +11,16 @@ try {
 } catch { /* Start with an empty list when stored JSON is invalid. */ }
 
 function saveTodos() {
+  updateStats();
   try { localStorage.setItem("todos", JSON.stringify(todos)); }
   catch { /* The current session still works if browser storage is unavailable. */ }
+}
+function updateStats() {
+  const done = todos.filter((todo) => todo.completed).length;
+  document.getElementById("badge").textContent = todos.length + (todos.length === 1 ? " task" : " tasks");
+  document.getElementById("stat-total").textContent = String(todos.length);
+  document.getElementById("stat-done").textContent = String(done);
+  document.getElementById("stat-left").textContent = String(todos.length - done);
 }
 function createTodonode(todo, index) {
   const li = document.createElement("li");
@@ -53,6 +61,7 @@ function createTodonode(todo, index) {
 function render() {
   list.innerHTML = "";
   todos.forEach((todo, index) => list.appendChild(createTodonode(todo, index)));
+  updateStats();
 }
 function addTodo() {
   const text = input.value.trim();
